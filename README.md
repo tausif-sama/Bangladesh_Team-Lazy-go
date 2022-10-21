@@ -37,7 +37,7 @@ This repository contains engineering materials of a self-driven vehicle's model 
 - We're using 2x HC-SR04 sonar sensors to measure distance from both the left and right walls.
 - A boost converter were used because providing sustained voltage to the motor driver is an absolute necessity for achieving consistent performance. XL6009 Provides a constant 12v to the Motor driver regardless of the battery voltage.
 - A Mini360 buck converter was used to power all the 5v devices.
-- A 3S 12.6V 1500mAh battery is powering this entire system. We're getting a runtime of average 40min.
+- A 3S 12.6V 1500mAh battery is powering this entire system. We're getting a runtime of average 140min.
 
 
 
