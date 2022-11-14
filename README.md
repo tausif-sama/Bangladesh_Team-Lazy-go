@@ -1,4 +1,4 @@
-# Engineering Documentation |Team Lazy-go | Bangladesh
+# Engineering Documentation | Team Lazy-go | Bangladesh
 ----
 
 This repository contains engineering materials of a self-driven vehicle's model from Team Lazy-go, Bangladesh, participating in the WRO Future Engineers competition in the season 2022.
