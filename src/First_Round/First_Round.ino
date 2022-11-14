@@ -1,86 +1,164 @@
 #include <NewPing.h>
-//#include <Wire.h>
-//#include <PIDController.h>
-#include <Servo.h>
+#include <PIDController.h>
+#include <ESP32Servo.h>
+
 Servo myservo;
-
-// Objects
-//PIDController pid; // Create an instance of the PID controller class, called "pid"
-
 #define MAX_DISTANCE 400 // Maximum distance (in cm) to ping.
-NewPing sonarL(12, 12, MAX_DISTANCE), sonarR(2, 2, MAX_DISTANCE);
-#define IN1 7 //assigning the motor pin
-#define IN2 8
-#define PWM 5
-#define stdby 4
-int dif, ID, LDF;   //assigning global variables
-int angle, w;
+PIDController pid; // Create an instance of the PID controller class, called "pid"
+NewPing sonarL(13, 13, MAX_DISTANCE), sonarR(14, 14, MAX_DISTANCE);     // 2 = right sensor, 3 = left
+
+#define IN1 4
+#define IN2 25
+#define PWM 2
+#define stdby 26
+int dif, ID;
+int angle;
 int cal, pwm;
-long duration, wallDist=40, mid_pos=90, max_steering=34;
-char dir;
+long duration, distance, RD, FD, LD;
 int turndis = 110;
-int count = 0;
+char dir;
+float p = 26, i = .1, d = 8;
 
-unsigned long timenow;
+void setup () {
+  Serial.begin(115200);
 
-int autoSteer(char); //autosteer function call(this steers the servo on basis of left and right sonar)
-void setup(void)
-{
-  Serial.begin(9600);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(PWM, OUTPUT);
   pinMode(stdby, OUTPUT);
-  pinMode(A3, OUTPUT);
-  if(digitalRead(A1)==LOW){
-    dir='L';  // assigning the switch mechanism    dir='L';
-    digitalWrite(A3,LOW);
-  }else{
-    dir='R';
-    digitalWrite(A3,HIGH);
-  }
-  myservo.attach(10);
-  if(sonarL.ping_cm()<sonarR.ping_cm() && sonarR.ping_cm()>40){    //this is the manual control of the bot to go at 19 cm distance
-    myservo.write(125);
-    drive(130);
-    delay(600);
-    myservo.write(50);
-    drive(130);
-    delay(500);
-    myservo.write(90);
-    delay(30);
-    drive(0);
-  }
 
-  
- 
-}
-void loop(void)
-{
-
-
-  timenow = millis();
-  int angle = autoSteer(dir);
- //Serial.println(angle);
-  
-
-  drive(80+abs(angle));  //driving the motors with appropiate speed
-
-  if(timenow>31000){
-    drive(0);
-  }
-}
-
-void drive(int pwm) { //driving function
-  if (pwm >= 0) {
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, LOW);
-    analogWrite(PWM, pwm);
-    digitalWrite(stdby, HIGH);
+  if (digitalRead(18) == LOW) {
+    dir = 'R';
+    digitalWrite(19, LOW);
   } else {
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN1, LOW);
-    analogWrite(PWM, -pwm);
-    digitalWrite(stdby, HIGH);
+    dir = 'L';
+    digitalWrite(19, HIGH);
+  }
+
+  pid.begin();          // initialize the PID instance
+  pid.setpoint(27);    // The "goal" the PID controller tries to "reach"
+  pid.tune(p, i, d);  // Tune the PID, arguments: kP, kI, kD
+  myservo.attach(33);
+  myservo.write(95); // 57, 95, 140
+  dir = 'L';
+
+}
+int sensorValue, output, lastOutput;
+unsigned long lastMillis = 0, zeroStartMillis = 0;
+float alpha = 0.6;
+int speed = 110;
+void loop () {
+  delay(2);
+  //   pid.setpoint(19);
+  Serial.print(dir);
+  Serial.print("\t");
+  Serial.print(sensorValue);
+  Serial.print("\t");
+  Serial.print(output);
+  Serial.print("\t");
+
+
+  if (dir == 'R') {
+    pid.limit(-42, 50);   // Limit the PID output, this is important to get rid of integral windup!
+    RD = sonarR.ping_cm();
+    if (RD == 0) RD = 200;
+
+    sensorValue = RD;  // Read the value from the sensor
+    output = pid.compute(sensorValue);   // Let the PID compute the value, returns the optimal output
+    //    output = constrain(output, -42, 50);
+
+    myservo.write(95 + output);
+    drive(speed - (abs(output) / 1));
+  } else {
+    pid.limit(-42, 40);   // Limit the PID output, this is important to get rid of integral windup!
+    LD = sonarL.ping_cm();
+    if (LD == 0)
+      LD = 200;
+    //    else
+    //      sensorValue = alpha * LD + (1 - alpha) * sensorValue;
+    sensorValue = LD;
+    output = pid.compute(sensorValue);   // Let the PID compute the value, returns the optimal output
+    output = constrain(output, -42, 40);
+
+    myservo.write(95 - output);
+    if (abs(output) > 5) {
+      drive(speed - map(abs(output), 5, 42, 25, 60));
+    }else{
+      drive(speed);
+    }
+  }
+  Serial.write(sensorValue);
+  //  const float alpha2 = 0.9;
+  //  output = alpha2 * output + (1 - alpha2) * lastOutput;
+  //  lastOutput = output;
+  /*if(LD>RD && LD>170)
+    {
+      myservo.write(104-60);
+      drive(190);
+      delay(700);
+      myservo.write(104+60);
+      drive(190);
+      delay(220);
+    } */
+
+  //  Serial.print("RD = ");
+  //  Serial.print(RD);
+  //  Serial.print(" - ");
+  //  Serial.print("LD = ");
+  //  Serial.print(LD);
+  //  Serial.print(" - ");
+  //  Serial.print("PID OUTPUT=");
+  //  Serial.println(output);
+
+  /* if(output<-25){
+     myservo.write(104-40);
+     drive(255);
+     //delay(1500);
+     myservo.write(104+40);
+     drive(200);
+     //delay(1000);
+     myservo.write(104);
+    }
+
+    else (FD<10){
+     drive(0);
+    }    */
+
+  Serial.println(millis() - lastMillis);
+  lastMillis = millis();
+  getInputs();
+}
+
+
+
+
+void drive(int pwm) {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(PWM, constrain(pwm, 0, 255));
+  digitalWrite(stdby, HIGH);
+}
+
+void getInputs() {
+  if (Serial.available() > 0) {
+    int received_char = Serial.read();
+    //    Serial.println(char(received_char));
+    switch (received_char) {
+      case 112://p
+        p = Serial.parseFloat();
+        pid.tune(p, i, d);  // Tune the PID, arguments: kP, kI, kD
+        break;
+      case 105://i
+        i = Serial.parseFloat();
+        pid.tune(p, i, d);  // Tune the PID, arguments: kP, kI, kD
+        break;
+      case 100://d
+        d = Serial.parseFloat();
+        pid.tune(p, i, d);  // Tune the PID, arguments: kP, kI, kD
+        break;
+      case 109://m
+        speed = Serial.parseInt();
+        break;
+    }
   }
 }

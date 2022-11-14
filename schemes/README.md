@@ -5,31 +5,37 @@ Badur Gaddi is a self driving car, modeled to work on the WRO FE track. The elec
 
 ## Parts List
 
-+ Arduino Nano
-+ PixyCAM - v2.1 Vision Sensor
-+ TB6612FNG Motor Driver 
-+ 12V 300RPM DC Geared Motor
-+ MG996R Servo Motor
-+ HC-SR04 Sonar Sensors
-+ XL6009 Buck Converter
-+ Mini360 Buck Converter
-+ 3S LiPo battery output through T-Plug Connector
-+ GY-271 HMC5883L Compass
++ JRC Board: An ESP32 based development board (Made in Bangladesh)
++ Huskylens: Embedded Vision Sensor
++ Adafruit HC-SR04 Ultrasonic Sensors
++ 12V DC Geared Motor
++ 9imod DS20MG Servo Motor
++ VNH2SP30 Motor Driver
++ MPU6050
++ 2x MP1584 Buck Converter
++ Pololu U3V70A Boost Converter
++ 3S LiPo battery output through XT60 Connector
 
-## Electrical Design decisions
+## Electrical Schematics Explanation
 
-- We've built a hand soldered pcb for ease of operation and efficient use of space.
-- We're using the Arduino Nano for it's compact size and ease of use.
-- PixyCAM V2 talks really good with the Nano and Arduino ecosystem. We're using I2C communication protocol.
-- We're using a 12V 300RPM geared motor that provides ample Torque and Speed.
-- The front Axel is being articulated by a MG996R Metal Gear servo.
-- We've used a TB6612FNG Motor driver. This is a more efficient alternative to L298N and it's overall compact size helps it sit rightly on our hadmande pcb.
-- A GY-271 HMC5883L Compass module was used to find the heading and and overall 2D Position 
-- We're using 2x HC-SR04 sonar sensors to measure distance from both the left and right walls.
-- A boost converter were used because providing sustained voltage to the motor driver is an absolute necessity for achieving consistent performance. XL6009 Provides a constant 12v to the Motor driver regardless of the battery voltage.
-- A Mini360 buck converter was used to power all the 5v devices.
-- A 3S 12.6V 1500mAh battery is powering this entire system. We're getting a runtime of average 40min.
-
+- Connections
+   - We've shorted the TRIG and ECHO pin of each sonar and using only one wire to communicate with the Sonar. This reduces clutter without any performance loss whatsoever.
+   - Huskylens and MPU6050 are connected via I2C to the JRC Board.
+   - The servo signal is connected to GPIO 4.
+   - VNH2SP30 is connected to the JRC board through a jumper pins, where: INA, INB, PWM, EN are connected to GPIO 25, 26, 2 and 33 respectively.
+   - A push button is connected to PIN 32, when the button is pressed, the PIN is pulled down to ground.
+   - All the spare GPIO are laid out on a female header for convenience.
+- PSU
+   - We're using two MP1584 so that we can use our servo at our full potential, i.e 0.09sec/60°@7.4V. Two MP1584 provides ample current to all of the onboard peripherals.
+   - U1: MP1584EN Provides 7.4v to the servo.
+   - U4: MP1584EN Provides 5v to the the all 5v devices on board.
+   - Pololu U3V70A is receiving power from the battery at about 11.1V and later keeping the voltage constant at 12V for the motor.
+   - The BATT_IN hoasts a solid XT60 connector for the battery input. 
+   - All connections and solder joints are reinforced for high current demand scenarios.
+- Board
+    - We're using the JRC Board as it is equipped with an ESP-32 microcontroller at a clock speed of 240Hz. This is the fastest development platform for the price currently available. As the ESP-32 is dual-core, we can run two loops simaltaneously which is very benificial. 
+    - There's a brief but impressive backsotry of the JRC Board. The abbreviation of 'JRC' is Jamilur Reza Chowdhury. Dr. Jamilur Reza Chowdhury was a Bangladeshi Civil Engineer, Professor, Researcher, and Education Advocate. He is also the pioneer of computers in Bangladesh and brought the first ever computers in Bangladesh. This board was designed and developed in the memory of Dr. Jamilur Reza Chowdhury to spread the light of IoT and hardware level electronics education to kids in Bangladesh. We're joining in to support their cause out of respect for Dr. Jamiulur Reza Chowdhury Sir and spreding the love for robotics and electronics throughout Bangladesh.
+    
 
       
 
