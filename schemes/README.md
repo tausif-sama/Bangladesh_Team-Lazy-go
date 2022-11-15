@@ -1,7 +1,15 @@
 Electrical Systems Design
 ====
 
-Badur Gaddi is a self driving car, modeled to work on the WRO FE track. The electrical parts, components and schematic diagrams are as follows.
+Folder contains the electrical design schematics, designed in EasyEDA.
+
+## Overview
+
+   - `Schematic_Lazy-bot_v0.1.4.json`: this json file can be imported in EasyEDA to edit and make changes.
+   - `Schematic_Lazy-bot_v0.1.4.pdf`: this is the pdf of the schematic, good for printing purposes.
+   - `Schematic_Lazy-bot_v0.1.4.png`: this is the image of the schematic.
+   - `Schematic_Lazy-bot_v0.1.4.schdoc`: this can be imported to Altium Designer
+   - `Schematic_Lazy-bot_v0.1.4.svg`: this is the svg of the schematic, good for online publishing.
 
 ## Parts List
 
@@ -36,7 +44,20 @@ Badur Gaddi is a self driving car, modeled to work on the WRO FE track. The elec
     - We're using the JRC Board as it is equipped with an ESP-32 microcontroller at a clock speed of 240Hz. This is the fastest development platform for the price currently available. As the ESP-32 is dual-core, we can run two loops simaltaneously which is very benificial. 
     - There's a brief but impressive backsotry of the JRC Board. The abbreviation of 'JRC' is Jamilur Reza Chowdhury. Dr. Jamilur Reza Chowdhury was a Bangladeshi Civil Engineer, Professor, Researcher, and Education Advocate. He is also the pioneer of computers in Bangladesh and brought the first ever computers in Bangladesh. This board was designed and developed in the memory of Dr. Jamilur Reza Chowdhury to spread the light of IoT and hardware level electronics education to kids in Bangladesh. We're joining in to support their cause out of respect for Dr. Jamiulur Reza Chowdhury Sir and spreding the love for robotics and electronics throughout Bangladesh.
     
+## Steps to replicate the exact same electrical design
 
++  Replicating the Power system
+    - Connect the main power from the XT60 connector to the both MP1584 buck converters and U3V70A Boost Converter. Set the output voltage of the boost converter to 12v (Whatever voltage your motor needs) and one MP1584 to 7.4v for the servo and the other one to 5V for all of the other onboard 5v devices.
+    - Connect the Output of the U3V70A to the PWR_IN and GND Pins of the VNH2SP30 Motor Driver.
+  
+
++  Connecting all the logic wires
+    - We're communicating with the huskylens and MPU6050 through I2C, connecting SDA and SCL of the JRC Board to the respective SCL and SDA Pins of MPU6050 and huskylens.
+    - We're taking sonar input on digital pins 16, 17.
+    - VNH2SP30 INA, INB, PWM, EN are connected to pins 25, 26, 2 and 33 respectively.
+    - A push button is wired to pin 32 and ground.
+    - Servo Signal pin to GPIO 4.
+    - Please follow the Schematics for detailed wiring guidelines.
       
 
 
