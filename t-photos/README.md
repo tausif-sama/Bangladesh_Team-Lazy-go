@@ -1,4 +1,9 @@
-Team's photos
+Team Photo
 ====
 
-This directory must contain 2 photos of the team (an official one and one funny photo with all team members)
+Folder contains two photos of Team Lazy-go.
+
+## Overview
+
+   - `funny.jpg`: we're funny, source: trust me bro.
+   - `serious.jpg`: we're serious when it counts, promise.
