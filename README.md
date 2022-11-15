@@ -27,7 +27,7 @@ This repository contains engineering materials of Lazy-bot, a self-driven vehicl
 
 
 
-# Program arrangement
+# Program arrangement and Algorithm Planning
 
 The robot is running on an ESP32-based development board called the JRC board locally made in our country to run all the actuators and sense the environment. It is using the Huskylens to see the red/green obstacles as well as the corner lines (blue/orange). An MPU6050 gyroscope and accelerometer sensor are used to detect the orientation of the robot and count laps.
 
@@ -62,6 +62,8 @@ The robot equips a gyroscope sensor to measure the yaw angle by integrating the 
 
 When the start button is pressed, the robot is at a zero-degree angle starting position. After each lap of the track, the robot spins 360 degrees. So we can detect the completion of three laps as soon as the robot completes 3x360 or 1080 degrees turn (+/- 20 degrees to compensate for errors). 
 However, the robot is not instantly stopped, since it may not have reached the straightforward section. We start waiting for the Huskylens to detect a blue or orange line in front of it and stop instantly with a short backward pulse to the drive motor (hard break).
+
+----
 
 
 
@@ -98,8 +100,23 @@ We've carefully selected the best possible parts for our robot after several hun
 - A 3S 12.6V 1500mAh battery is powering this entire system. We're getting a runtime of average 3 hours.
 
 
+----
 
 
 
+# Mechanical Design
 
+We're using a ready made Ackermann based chassis kit from YF robot and have significantly modified each aspect of the chassis. The chassis base plate is made of Aluminum and the rest of the parts involve brass spacers, acrylic top plates, front articulating axel parts and some other miscellaneous parts. We've also designed and 3D Printed some parts for making our chassis more practical.
+
+## Design Decisions
+
+We setteled on the YF Robot chassis because it provided a robust platform to work on and featured ackermann steering mechanism. We've deigned and 3D printed some parts which were required for the optimal operation of the robot. We used a clip-on ultrawide lens for the huskylens to widen it's FoV.
+
+
+## 3D Printed parts designed by us
+
+- We've designed a sonar mount which is mounted in the front of the robot where the sonar sensors are mounted at an angle of 20 deg. We've tested this to be the optimal angle for the sonars to detect walls before hand, providing ample time for the bot to react.
+- An elevated and angled mount for the huskylens was designed for the camera to get optimal vision of the track.
+- The wheels were completely 3D printed, except for the tires. After extensive testing, we've found that thin twheels perfom better in cases where precise movement is required.
+- A mounting plate for the veroboard was designed so that the solder joints under the board do not make any contact with the motor.
 
