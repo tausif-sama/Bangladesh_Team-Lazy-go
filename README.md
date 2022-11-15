@@ -1,7 +1,7 @@
-# Engineering Documentation |Team Lazy-go | Bangladesh
+# Engineering Documentation | Team Lazy-go | Bangladesh
 ----
 
-This repository contains engineering materials of a self-driven vehicle's model from Team Lazy-go, Bangladesh, participating in the WRO Future Engineers competition in the season 2022.
+This repository contains engineering materials of Lazy-bot, a self-driven vehicle's model from Team Lazy-go, Bangladesh, participating in the WRO Future Engineers competition in the season 2022.
 
 ----
 
@@ -17,7 +17,7 @@ This repository contains engineering materials of a self-driven vehicle's model 
 
 + `chassis` - this folder contains details of the chassis that we've used
 + `models` - contains 3D Printable files designed by us
-+ `schemes`- contains the electrical systems schematics 
++ `schemes` - contains the electrical systems schematics 
 + `src` - contains the main programs and control software and 
 + `t-photos` - contains one serious and one funny photo
 + `v-photos` - contains the photos of the robot from all required directions
@@ -56,19 +56,20 @@ This repository contains engineering materials of a self-driven vehicle's model 
 
 # Electrical Systems Design
 
+We've carefully selected the best possible parts for our robot after several hundred hours of R&D and have tried to achieve highest possible efficiency and reliability. The electrical systems design is explained in the following paragraph.
 
 ## Parts List
 
 + JRC Board: An ESP32 based development board (Made in Bangladesh)
 + Huskylens: Embedded Vision Sensor
 + Adafruit HC-SR04 Ultrasonic Sensors
-+ 12V DC Geared Motor
++ 12V 300RPM DC Geared Motor
 + 9imod DS20MG Servo Motor
 + VNH2SP30 Motor Driver
 + MPU6050
 + 2x MP1584 Buck Converter
 + Pololu U3V70A Boost Converter
-+ 3S LiPo battery output through XT60 Connector
++ 3S LiPo battery input through XT60 Connector
 
 ## Design decisions
 
