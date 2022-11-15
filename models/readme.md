@@ -1,10 +1,10 @@
-Chassis 
+Designed and 3D Printed Models
 ====
 
 These are all the essential parts of our robot which was 3D Printed. All the parts were modeled and designed in Autodesk Fusion 360 and printed with a self-made custom 3D Printer.
 
 
-## 3D Printed Parts
+## 3D Printable files overview
 
    - `Motor Driver Mount.stl`: This model helps us mount the VNH2SP30 Motor Driver to the chassis.
    - `PCB mounting plate.stl`: This model is used to mount our veroboard to the robot.
