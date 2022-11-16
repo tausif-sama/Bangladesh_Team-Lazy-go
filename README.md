@@ -22,7 +22,7 @@ This repository contains engineering materials of Lazy-bot, a self-driven vehicl
 + `t-photos` - contains one serious and one funny photo
 + `v-photos` - contains the photos of the robot from all required directions
 + `video` - contains youtube link of the video where you can see our robot in action
-+ `others` - tutorial photos
++ `others` - other essential photos
 
 ----
 
