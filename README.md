@@ -121,22 +121,30 @@ We're using a ready made Ackermann based chassis kit from YF robot and have sign
 - The wheels were completely 3D printed, except for the tires. After extensive testing, we've found that thin twheels perfom better in cases where precise movement is required.
 - A mounting plate for the veroboard was designed so that the solder joints under the board do not make any contact with the motor.
 
+----
 
 
 # Software Setup
 ![img0](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/img0.jpg)
 - First we need to install the latest Arduino IDE on our computer from: arduino.cc/en/Main/Software. If you already have an older version, uninstall it and install the latest one again. Otherwise, it may not work.
+
 ![img1](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/img1.jpg)
 - In your Arduino IDE, go to File > Preferences, and enter the following into the "Additional Board Manager URLs" field, and click OK:
 `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
+
 ![img2](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/img2.jpg)
 - Open the Arduino Boards Manager: Tools > Board > Boards Manager... and search for ESP32. Press install button for the "ESP32 by Espressif Systems".
+
 ![img3](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/img3.jpg)
 - Now we try to upload our code to the ESP32. Select your Board in Tools > Board menu (in our case it is the DOIT ESP32 DEVKIT V1).
+
 ![img4](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/img4.jpg)
 - Select the COM port, and open the sketch.
+
 ![img5](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/img5.jpg)
 - Press the Upload button in the Arduino IDE. Wait a few seconds while the code compiles and uploads to your board. It should say "Done Uploading" if the upload completes successfully.
+
 ![img6](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/img6.jpg)
 - Now you can place the robot on the track, power it up, and wait until the front servo centers.
+
 - Press the button and it will start doing the laps.
