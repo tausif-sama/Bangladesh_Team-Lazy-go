@@ -98,18 +98,17 @@ We've carefully selected the best possible parts for our robot after several hun
 - 2x MP1584 buck converters were used, one for powering all the 5v peripherals and on-board devices and the other one for providing 7.4v to the servo motor.
 - A MPU6050 was used to know the orientation of the robot in real-time. This data is later used to count laps.
 - A 3S 12.6V 1500mAh battery is powering this entire system. We're getting a runtime of average 3 hours.
-+ Chassis
-
-    - We setteled on the YF Robot chassis because it provided a robust platform to work on and featured ackermann steering mechanism. We've deigned and 3D printed some parts which were required for the optimal operation of the robot. 
 
 
 ----
 
 
-
 # Mechanical Design
 
 We're using a ready made Ackermann based chassis kit from YF robot and have significantly modified each aspect of the chassis. The chassis base plate is made of Aluminum and the rest of the parts involve brass spacers, acrylic top plates, front articulating axel parts and some other miscellaneous parts. We've also designed and 3D Printed some parts for making our chassis more practical.
+
+## Design Decisions
+We setteled on the YF Robot chassis because it provided a robust platform to work on and featured ackermann steering mechanism. We've deigned and 3D printed some parts which were required for the optimal operation of the robot. 
 
 
 
