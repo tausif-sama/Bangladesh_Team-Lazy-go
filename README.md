@@ -22,6 +22,7 @@ This repository contains engineering materials of Lazy-bot, a self-driven vehicl
 + `t-photos` - contains one serious and one funny photo
 + `v-photos` - contains the photos of the robot from all required directions
 + `video` - contains youtube link of the video where you can see our robot in action
++ `others` - tutorial photos
 
 ----
 
@@ -84,7 +85,7 @@ We've carefully selected the best possible parts for our robot after several hun
 + Pololu U3V70A Boost Converter
 + 3S LiPo battery input through XT60 Connector
 
-# Design decisions
+## Design decisions
 
 +  JRC Board
     - We're using the JRC Board as it is equipped with an ESP-32 microcontroller at a clock speed of 240Hz. This is the fastest development platform for the price currently available. As the ESP-32 is dual-core, we can run two loops simaltaneously which is very benificial. 
