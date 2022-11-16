@@ -84,7 +84,7 @@ We've carefully selected the best possible parts for our robot after several hun
 + Pololu U3V70A Boost Converter
 + 3S LiPo battery input through XT60 Connector
 
-## Design decisions
+# Design decisions
 
 +  JRC Board
     - We're using the JRC Board as it is equipped with an ESP-32 microcontroller at a clock speed of 240Hz. This is the fastest development platform for the price currently available. As the ESP-32 is dual-core, we can run two loops simaltaneously which is very benificial. 
@@ -98,6 +98,9 @@ We've carefully selected the best possible parts for our robot after several hun
 - 2x MP1584 buck converters were used, one for powering all the 5v peripherals and on-board devices and the other one for providing 7.4v to the servo motor.
 - A MPU6050 was used to know the orientation of the robot in real-time. This data is later used to count laps.
 - A 3S 12.6V 1500mAh battery is powering this entire system. We're getting a runtime of average 3 hours.
++ Chassis
+
+    - We setteled on the YF Robot chassis because it provided a robust platform to work on and featured ackermann steering mechanism. We've deigned and 3D printed some parts which were required for the optimal operation of the robot. 
 
 
 ----
@@ -108,9 +111,7 @@ We've carefully selected the best possible parts for our robot after several hun
 
 We're using a ready made Ackermann based chassis kit from YF robot and have significantly modified each aspect of the chassis. The chassis base plate is made of Aluminum and the rest of the parts involve brass spacers, acrylic top plates, front articulating axel parts and some other miscellaneous parts. We've also designed and 3D Printed some parts for making our chassis more practical.
 
-## Design Decisions
 
-We setteled on the YF Robot chassis because it provided a robust platform to work on and featured ackermann steering mechanism. We've deigned and 3D printed some parts which were required for the optimal operation of the robot. We used a clip-on ultrawide lens for the huskylens to widen it's FoV.
 
 
 ## 3D Printed parts designed by us
@@ -120,3 +121,16 @@ We setteled on the YF Robot chassis because it provided a robust platform to wor
 - The wheels were completely 3D printed, except for the tires. After extensive testing, we've found that thin twheels perfom better in cases where precise movement is required.
 - A mounting plate for the veroboard was designed so that the solder joints under the board do not make any contact with the motor.
 
+
+
+# Software Setup
+![image003]()
+- First we need to install the latest Arduino IDE on our computer from: arduino.cc/en/Main/Software. If you already have an older version, uninstall it and install the latest one again. Otherwise, it may not work.
+- In your Arduino IDE, go to File > Preferences, and enter the following into the "Additional Board Manager URLs" field, and click OK:
+`https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
+- Open the Arduino Boards Manager: Tools > Board > Boards Manager... and search for ESP32. Press install button for the "ESP32 by Espressif Systems".
+- Now we try to upload our code to the ESP32. Select your Board in Tools > Board menu (in our case it is the DOIT ESP32 DEVKIT V1).
+- Select the COM port, and open the sketch.
+- Press the Upload button in the Arduino IDE. Wait a few seconds while the code compiles and uploads to your board. It should say "Done Uploading" if the upload completes successfully.
+- Now you can place the robot on the track, power it up, and wait until the front servo centers.
+- Press the button and it will start doing the laps.
