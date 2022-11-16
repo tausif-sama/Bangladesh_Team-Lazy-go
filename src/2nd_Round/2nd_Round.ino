@@ -1,5 +1,4 @@
 #include "HUSKYLENS.h"
-#include <BluetoothSerial.h>
 #include <NewPing.h>
 #include <Wire.h>
 #include <ESP32Servo.h>
@@ -10,7 +9,6 @@ int yawAngle = 0, startAngle = 0;
 unsigned long MPUtimer = 0, lapTimer = 0;
 
 HUSKYLENS huskylens;
-BluetoothSerial mySerial;
 Servo myservo;
 
 #define MAX_DISTANCE 140 // Maximum distance (in cm) to ping.
@@ -19,7 +17,7 @@ NewPing sonarL(16, 16, MAX_DISTANCE), sonarR(17, 17, MAX_DISTANCE);
 #define IN2 25
 #define PWM 2
 #define stdby 33
-#define button 32
+#define button 14
 #define servo 4
 
 int lastSpeed = 0;
@@ -44,7 +42,6 @@ byte priority = 0;
 void setup(void) {
   Serial.begin(115200);
   Serial.print("Starting...\n");
-  mySerial.begin("ESP32test");
   Wire.begin();
   while (mpu.begin() != 0) {
     Serial.print(F("MPU6050 failed to initialize!"));
@@ -61,7 +58,7 @@ void setup(void) {
   pinMode(IN2, OUTPUT);
   pinMode(PWM, OUTPUT);
   pinMode(stdby, OUTPUT);
-  pinMode(button, INPUT_PULLDOWN);
+  pinMode(button, INPUT_PULLUP);
   //  pinMode(A3, OUTPUT);
   //  if (digitalRead(A1) == LOW) {
   //    dir = 'L';
@@ -195,7 +192,7 @@ void loop(void) {
   if (noObjectCount > 10) {
     noObjectCount = 0;
     bool breakable = false;
-    mySerial.println("going straight");
+    Serial.println("going straight");
     myservo.write(90);
     drive(45);
     while (huskylens.count(1) == 0 && huskylens.count(2) == 0) {
@@ -208,7 +205,7 @@ void loop(void) {
         breakable = true;
         break;
       }
-      mySerial.println("waiting for infinity");
+      Serial.println("waiting for infinity");
       int dist = sonarL.ping_cm();
       if (dist == 0 || dist > 90) {
         MPU();
@@ -226,7 +223,7 @@ void loop(void) {
         break;
       }
 
-      mySerial.println("waiting to reach angle");
+      Serial.println("waiting to reach angle");
       MPU();
       if (dir == 'L') {
         myservo.write(90 - 40);
@@ -236,12 +233,12 @@ void loop(void) {
     }
     while (!breakable && huskylens.count(1) == 0 && huskylens.count(2) == 0) {
       huskylens.request();
-      mySerial.println("waiting to for object");
+      Serial.println("waiting to for object");
       myservo.write(90);
       drive(45);
     }
   } else {
-    //    mySerial.println("detected object 1/2!");
+    //    Serial.println("detected object 1/2!");
   }
   angle = autoSteer(dir);
   // Serial.println(angle);
@@ -278,15 +275,15 @@ void printResult(HUSKYLENSResult result) {
 }
 
 void getInputs() {
-  if (mySerial.available() > 0) {
-    int received_char = mySerial.read();
+  if (Serial.available() > 0) {
+    int received_char = Serial.read();
     //    Serial.println(char(received_char));
     switch (received_char) {
       case 108://t
-        followThreshold = mySerial.parseInt();
+        followThreshold = Serial.parseInt();
         break;
       case 109://m
-        speed = mySerial.parseInt();
+        speed = Serial.parseInt();
         break;
       case 110://n
         lapTimer = millis();
@@ -302,8 +299,8 @@ void getInputs() {
         break;
 
       case 113://q
-        //        timeToIgnore = mySerial.parseInt();
-        //        mySerial.println(
+        //        timeToIgnore = Serial.parseInt();
+        //        Serial.println(
         break;
     }
   }
@@ -317,7 +314,7 @@ void waitForN() {
       //          startAngle = abs(mpu.getAngleZ());
       lapTimer = millis();
       drive(150);
-      delay(50);
+      delay(10);
       start = true;
     }
   }
@@ -340,7 +337,7 @@ void checkSonar() {
   if (Ldistance < 8 && Ldistance != 0) LRiskCount++;
   if (Rdistance < 8 && Rdistance != 0) RRiskCount++;
   if (LRiskCount > 9) {
-    mySerial.println("Left risk");
+    Serial.println("Left risk");
     int here = lastSpeed;
     myservo.write(50);
     drive(40);
@@ -350,7 +347,7 @@ void checkSonar() {
   }
 
   if (RRiskCount > 9) {
-    mySerial.println("Right risk");
+    Serial.println("Right risk");
     int here = lastSpeed;
     myservo.write(140);
     drive(40);
@@ -366,7 +363,7 @@ void MPU() {
   if ((millis() - MPUtimer) > 50) {
     if (start == false) {
       startAngle = abs(mpu.getAngleZ());
-      mySerial.println(startAngle);
+      Serial.println(startAngle);
     } else {
       yawAngle = abs(mpu.getAngleZ()) - startAngle;
     }
@@ -374,7 +371,7 @@ void MPU() {
   }
   if (yawAngle > (90 * turnCount + 1) - 15) {
     turnCount++;
-    mySerial.println(turnCount);
+    Serial.println(turnCount);
   }
 }
 
@@ -385,11 +382,11 @@ void check3Lap() {
       drive(-150);
       delay(100);
       drive(0);
-      mySerial.println("\n3 laps completed!\n");
-      mySerial.print("Lap time: ");
+      Serial.println("\n3 laps completed!\n");
+      Serial.print("Lap time: ");
       int lapTime = (millis() - lapTimer) / 1000;
-      mySerial.print(lapTime);
-      mySerial.println(" seconds");
+      Serial.print(lapTime);
+      Serial.println(" seconds");
       while (1)
         getInputs();
     }
