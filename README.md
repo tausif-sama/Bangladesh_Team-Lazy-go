@@ -100,6 +100,8 @@ We've carefully selected the best possible parts for our robot after several hun
 - A MPU6050 was used to know the orientation of the robot in real-time. This data is later used to count laps.
 - A 3S 12.6V 1500mAh battery is powering this entire system. We're getting a runtime of average 3 hours.
 
+![brd1](https://github.com/tausif-sama/Bangladesh_Team-Lazy-go/blob/main/others/brd1.jpg.jpg)
+
 
 ----
 
