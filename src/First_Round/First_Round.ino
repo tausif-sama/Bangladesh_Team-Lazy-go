@@ -1,7 +1,6 @@
 #include <NewPing.h>
 #include <PIDController.h>
 #include <ESP32Servo.h>
-#include <BluetoothSerial.h>
 #include <HUSKYLENS.h>
 #include <MPU6050_light.h>
 MPU6050 mpu(Wire);
@@ -12,7 +11,6 @@ unsigned long MPUtimer = 0, lapTimer = 0;
 Servo myservo;
 #define MAX_DISTANCE 200 // Maximum distance (in cm) to ping.
 PIDController pid; // Create an instance of the PID controller class, called "pid"
-BluetoothSerial mySerial;
 HUSKYLENS huskylens;
 
 
@@ -24,7 +22,7 @@ NewPing sonarL(15, 15, MAX_DISTANCE), sonarR(16, 16, MAX_DISTANCE);     // 2 = r
 #define servo 33
 #define button 14
 
-#define mainSpeed 120
+int mainSpeed = 120;
 bool start = false;
 int dif, ID;
 int angle;
@@ -32,7 +30,7 @@ int cal, pwm;
 long duration, distance, RD, FD, LD;
 int turndis = 110;
 char dir;
-float p = 23, i = .1, d = 8;
+float p = 25, i = .1, d = 8;
 
 
 int sensorValue, output, lastOutput;
@@ -45,7 +43,7 @@ int timeToIgnore = 1000;
 
 void setup () {
   Serial.begin(115200);  // Some methods require the Serial.begin() method to be called first'
-  mySerial.begin("ESP32test");  // Some methods require the Serial.begin() method to be called first'
+  //Serial.begin("ESP32test");  // Some methods require the Serial.begin() method to be called first'
 
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
@@ -100,11 +98,11 @@ void setup () {
     }
     int error = LD - RD;
     myservo.write(constrain(map(error, -80, 80, 50, 140), 50, 140));
-    //    mySerial.print(LD);
-    //    mySerial.print("    ");
-    //    mySerial.print(RD);
-    //    mySerial.print("    ");
-    //    mySerial.println(error);
+    //    Serial.print(LD);
+    //    Serial.print("    ");
+    //    Serial.print(RD);
+    //    Serial.print("    ");
+    //    Serial.println(error);
     //    if (huskylens.request(3) || huskylens.request(4)) {
     //      if (huskylens.count(3) > 0 || huskylens.count(4) > 0) {
     //        turnCount++;
@@ -115,32 +113,33 @@ void setup () {
     //    }
   }
 }
-bool endAngleReached = false;
+int endAngleReached = 0;
 void loop () {
   MPU();
-  if (yawAngle > endAngle - 30 && yawAngle < endAngle + 30) {
-    endAngleReached = true;
+  if (yawAngle > endAngle - 18 && yawAngle < endAngle + 18) {
+    endAngleReached++;
   }
-  if (endAngleReached == true && (huskylens.request(3) || huskylens.request(4))) {
-    myservo.write(90);
-    drive(-150);
-    delay(100);
-    drive(0);
-    mySerial.println("3 laps completed!\n");
-    mySerial.print("Lap time: ");
-    int lapTime = (millis() - lapTimer) / 1000;
-    mySerial.print(lapTime);
-    mySerial.println(" seconds");
-    while (1)
-      getInputs();
+  if (endAngleReached > 5 && (huskylens.request(3) || huskylens.request(4))) {
+//    if (huskylens.count(3) > 0 || huskylens.count(4) > 0) {
+      myservo.write(90);
+      drive(-150);
+      delay(100);
+      drive(0);
+      Serial.println("3 laps completed!\n");
+      Serial.print("Lap time: ");
+      int lapTime = (millis() - lapTimer) / 1000;
+      Serial.print(lapTime);
+      Serial.println(" seconds");
+      while (1);
+//    }
   }
   if (justTurned == true && abs(output) < 15) {
-    mySerial.println("\nSpeeding up!");
-    speed = 255;
+    Serial.println("\nSpeeding up!");
+    if (turnCount < 12)speed = 255;
     highSpeedMillis = millis();
     justTurned = false;
   }
-  if (millis() - highSpeedMillis > 20 && speed > mainSpeed) {
+  if (millis() - highSpeedMillis > 50 && speed > mainSpeed) {
     speed = mainSpeed;
   }
   //  if (turnCount >= 12) {
@@ -160,12 +159,12 @@ void loop () {
   //  Serial.print("\t");
   //  Serial.print(output);
   //  Serial.print("\t");
-  //  mySerial.print(orangeCount);
-  //  mySerial.print("\t");
-  //  mySerial.print(blueCount);
-  //  mySerial.print("\t");
-  //  mySerial.print(turnCount);
-  //  mySerial.print("\t");
+  //  Serial.print(orangeCount);
+  //  Serial.print("\t");
+  //  Serial.print(blueCount);
+  //  Serial.print("\t");
+  //  Serial.print(turnCount);
+  //  Serial.print("\t");
 
 
   if (dir == 'R') {
@@ -181,8 +180,12 @@ void loop () {
     output = pid.compute(sensorValue);   // Let the PID compute the value, returns the optimal output
     output = constrain(output, -40, 50);
 
-    myservo.write(95 + output);
-    drive(speed - (abs(output) * 1.5));
+    myservo.write(92 + output);
+    if (turnCount > 11) {
+      drive(speed);
+    } else {
+      drive(speed - (abs(output) * 1.3));
+    }
   } else {
     pid.limit(-50, 40);   // Limit the PID output between 0 and 255, this is important to get rid of integral windup!
     LD = sonarL.ping_cm();
@@ -197,8 +200,12 @@ void loop () {
     output = pid.compute(sensorValue);   // Let the PID compute the value, returns the optimal output
     output = constrain(output, -50, 40);
 
-    myservo.write(95 - output);
-    drive(speed - (abs(output) * 1.5));
+    myservo.write(92 - output);
+    if (turnCount > 11) {
+      drive(speed);
+    } else {
+      drive(speed - (abs(output) * 1.3));
+    }
   }
 
   if (sensorValue > 120 && millis() - lastTurnMillis > 1000) {
@@ -206,8 +213,12 @@ void loop () {
     lastTurnMillis = millis();
     justTurned = true;
   }
+  if (turnCount > 11) {
+    mainSpeed = 80;
+    speed = mainSpeed;
+  }
 
-  mySerial.println(yawAngle);
+  Serial.println(yawAngle);
   //  const float alpha2 = 0.9;
   //  output = alpha2 * output + (1 - alpha2) * lastOutput;
   //  lastOutput = output;
@@ -272,24 +283,24 @@ void drive(int pwm) {
 }
 
 void getInputs() {
-  if (mySerial.available() > 0) {
-    int received_char = mySerial.read();
+  if (Serial.available() > 0) {
+    int received_char = Serial.read();
     //    Serial.println(char(received_char));
     switch (received_char) {
       case 112://p
-        p = mySerial.parseFloat();
+        p = Serial.parseFloat();
         pid.tune(p, i, d);  // Tune the PID, arguments: kP, kI, kD
         break;
       case 105://i
-        i = mySerial.parseFloat();
+        i = Serial.parseFloat();
         pid.tune(p, i, d);  // Tune the PID, arguments: kP, kI, kD
         break;
       case 100://d
-        d = mySerial.parseFloat();
+        d = Serial.parseFloat();
         pid.tune(p, i, d);  // Tune the PID, arguments: kP, kI, kD
         break;
       case 109://m
-        speed = mySerial.parseInt();
+        speed = Serial.parseInt();
         break;
       case 110://n
         if (start != true) {
@@ -305,14 +316,14 @@ void getInputs() {
         break;
 
       case 113://q
-        timeToIgnore = mySerial.parseInt();
-        mySerial.print("set to: ");
-        mySerial.println(timeToIgnore);
+        timeToIgnore = Serial.parseInt();
+        Serial.print("set to: ");
+        Serial.println(timeToIgnore);
         break;
 
       case 114://r
-        mySerial.print("Current degree");
-        mySerial.println(yawAngle);
+        Serial.print("Current degree");
+        Serial.println(yawAngle);
         drive(-200);
         delay(100);
         drive(0);
@@ -327,7 +338,7 @@ void MPU() {
   if ((millis() - MPUtimer) > 50) {
     if (start == false) {
       startAngle = abs(mpu.getAngleZ());
-      mySerial.println(startAngle);
+      Serial.println(startAngle);
     } else {
       yawAngle = abs(mpu.getAngleZ()) - startAngle;
     }
